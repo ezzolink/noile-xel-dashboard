@@ -20,8 +20,14 @@ function App() {
   const [market, setMarket] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [systemStatus, setSystemStatus] = useState({ is_online: true, last_heartbeat: new Date() });
   const [loading, setLoading] = useState(true);
+
+  const tabs = [
+    { id: 'finance', label: 'Balanço', icon: Wallet },
+    { id: 'projects', label: 'Projetos', icon: Rocket },
+    { id: 'agenda', label: 'Agenda', icon: Calendar },
+    { id: 'system', label: 'Núcleo', icon: Settings },
+  ];
 
   useEffect(() => {
     fetchData();
@@ -60,9 +66,8 @@ function App() {
   };
 
   const totalExpenses = useMemo(() => expenses.reduce((sum, e) => sum + Number(e.amount), 0), [expenses]);
-  const netProfit = finances.total_projected - totalExpenses;
+  const netProfit = (finances.total_projected || 0) - totalExpenses;
 
-  // Chart Data Mockup (Growth)
   const chartData = [
     { name: 'Jan', val: 0 },
     { name: 'Feb', val: 50000 },
