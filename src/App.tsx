@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import { 
   Wallet, Rocket, Calendar, Settings,
@@ -103,7 +103,7 @@ function App() {
     }
   };
 
-  const netProfit = (finances.total_projected || 0); // Temporary simplicity until expenses are active
+  const netProfit = (finances.total_projected || 0); // No expenses logic yet to keep TS clean
 
   const chartData = [
     { name: 'Jan', val: 0 },
