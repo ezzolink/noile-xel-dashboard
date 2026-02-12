@@ -1,26 +1,73 @@
-# 🌌 Noile Xel Dashboard PRO
+# React + TypeScript + Vite
 
-O **Noile Xel Dashboard PRO** é uma plataforma de gestão empresarial de elite, desenhada para centralizar projetos, finanças e automação inteligente do Elias Sebastião. Esta versão evoluiu de um simples painel estático para uma aplicação **React + Supabase** de alta performance.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 💎 Funcionalidades de Elite
+Currently, two official plugins are available:
 
-- **📊 Gestão Financeira Real-Time:** Cálculo dinâmico de Cashflow (Balanço Líquido), acompanhamento de capital projectado e monitorização de preços de mercado (SOL/BTC).
-- **📄 Gerador de Faturas PDF:** Emissão automática de Notas de Honorários profissionais em formato PDF diretamente da aba de Agenda.
-- **🤖 Noile Xel AI Insights:** Sistema de inteligência proativa que analisa dados e deixa lembretes estratégicos no painel.
-- **🚀 Gestão de Projetos (Kanban):** Sistema de tarefas (Checklist) integrado a cada projeto para acompanhamento granular de progresso.
-- **📱 Experiência PWA Avançada:** Instalável no telemóvel com interface ultra-fluida, animações premium e notificações toast.
-- **🛡️ Persistência Supabase:** Sincronização em tempo real entre o agente e a interface web.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 🛠 Stack Tecnológica
+## React Compiler
 
-- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion (Animações).
-- **Backend:** Supabase (PostgreSQL + Realtime).
-- **Bibliotecas Pro:** jsPDF (Documentação), Recharts (Visualização), Lucide (Iconografia).
-- **Deployment:** Netlify (CI/CD Automático).
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## 🤖 Operação do Agente
+## Expanding the ESLint configuration
 
-O Noile Xel actua como o "Backend Inteligente", alimentando o banco de dados via API e monitorizando eventos críticos para manter o Elias sempre no controlo da sua operação digital.
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
----
-*Powered by Noile Xel Engine | Elias Sebastião Enterprise 2026*
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
