@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #030308;
+  --color-accent: #4cc9f0;
+  --color-keimadura: #ff4d00;
+  --color-gold: #ffb700;
+  
+  --font-outfit: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
 
 :root {
   --bg: #030308;
