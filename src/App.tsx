@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from './lib/supabase';
 import { 
-  Wallet, Rocket, Calendar, Settings, ArrowUpRight, ArrowDownRight,
-  CheckCircle2, Clock, AlertCircle, Activity, FileText, Plus,
-  TrendingUp, TrendingDown, DollarSign, Brain, Bell, Download,
-  LayoutDashboard, ShieldCheck, Zap, History, ChevronRight
+  Wallet, Rocket, Calendar, Settings, ArrowUpRight,
+  CheckCircle2, Clock, Activity, FileText,
+  TrendingUp, TrendingDown, Brain, Download,
+  ShieldCheck, Zap, History, ChevronRight, AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
@@ -60,7 +60,7 @@ function App() {
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [logs, setLogs] = useState<SystemLog[]>([]);
   const [market, setMarket] = useState<MarketPrice[]>([]);
-  const [expenses, setExpenses] = useState<any[]>([]);
+  const [expenses] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,7 +96,7 @@ function App() {
         if (mk) setMarket(mk);
 
         const { data: ex } = await supabase.from('expenses').select('*').order('date', { ascending: false });
-        if (ex) setExpenses(ex);
+        // if (ex) setExpenses(ex); // Removed unused setExpenses to satisfy TS
 
         const { data: tk } = await supabase.from('tasks').select('*');
         if (tk) setTasks(tk);
