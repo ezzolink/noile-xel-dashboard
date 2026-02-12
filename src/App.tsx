@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from './lib/supabase';
 import { 
-  Wallet, Rocket, Calendar, Settings, ArrowUpRight,
-  CheckCircle2, Clock, Activity, FileText,
+  Wallet, Rocket, Calendar, Settings,
+  CheckCircle2, Clock, Activity,
   TrendingUp, TrendingDown, Brain, Download,
   ShieldCheck, Zap, History, ChevronRight, AlertCircle
 } from 'lucide-react';
@@ -60,7 +60,6 @@ function App() {
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [logs, setLogs] = useState<SystemLog[]>([]);
   const [market, setMarket] = useState<MarketPrice[]>([]);
-  const [expenses] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -95,9 +94,6 @@ function App() {
         const { data: mk } = await supabase.from('market_prices').select('*');
         if (mk) setMarket(mk);
 
-        const { data: ex } = await supabase.from('expenses').select('*').order('date', { ascending: false });
-        // if (ex) setExpenses(ex); // Removed unused setExpenses to satisfy TS
-
         const { data: tk } = await supabase.from('tasks').select('*');
         if (tk) setTasks(tk);
     } catch (err) {
@@ -107,8 +103,7 @@ function App() {
     }
   };
 
-  const totalExpenses = useMemo(() => expenses.reduce((sum, e) => sum + Number(e.amount), 0), [expenses]);
-  const netProfit = (finances.total_projected || 0) - totalExpenses;
+  const netProfit = (finances.total_projected || 0); // Temporary simplicity until expenses are active
 
   const chartData = [
     { name: 'Jan', val: 0 },
