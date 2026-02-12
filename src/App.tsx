@@ -55,11 +55,12 @@ interface Task {
 
 function App() {
   const [activeTab, setActiveTab] = useState('finance');
-  const [finances, setFinances] = useState<FinanceData>({ total_projected: 338000, current_billing: 50000 });
+  const [finances, setFinances] = useState<FinanceData>({ total_projected: 440000, current_billing: 50000 });
   const [projects, setProjects] = useState<Project[]>([]);
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [logs, setLogs] = useState<SystemLog[]>([]);
   const [market, setMarket] = useState<MarketPrice[]>([]);
+  const [expenses] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +104,7 @@ function App() {
     }
   };
 
-  const netProfit = (finances.total_projected || 0); // No expenses logic yet to keep TS clean
+  const netProfit = (finances.total_projected || 0);
 
   const chartData = [
     { name: 'Jan', val: 0 },
@@ -186,7 +187,7 @@ function App() {
               <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-accent/5">
                 <Brain className="text-accent shrink-0" size={18} />
                 <p className="text-[10px] leading-relaxed text-accent/90">
-                  "Sincronização total activada. Todas as métricas de Fevereiro e Março estão visíveis agora."
+                  "Projecto Piedade Londa removido. Orçamento projectado recalibrado para 440.000 Kz."
                 </p>
               </div>
 
@@ -200,7 +201,7 @@ function App() {
                     </div>
                     <div className="flex justify-between items-center mt-4">
                         <p className="text-[9px] text-slate-500 font-mono uppercase">Liquidez Esperada</p>
-                        <span className="text-[10px] text-emerald-400 font-bold tracking-tighter">+85% vs JAN</span>
+                        <span className="text-[10px] text-emerald-400 font-bold tracking-tighter">+40% vs JAN</span>
                     </div>
                 </div>
                 
@@ -242,12 +243,12 @@ function App() {
                         <span className="text-emerald-400 font-mono">+250.000 Kz</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px]">
-                        <span className="text-slate-300">Mãos da Daddy (Projecto)</span>
-                        <span className="text-emerald-400 font-mono">+88.000 Kz</span>
+                        <span className="text-slate-300">ITAQ (Website)</span>
+                        <span className="text-emerald-400 font-mono">+170.000 Kz</span>
                     </div>
                     <div className="pt-2 border-t border-white/5 flex justify-between items-center text-[10px] font-bold">
                         <span className="text-slate-100 uppercase tracking-widest">Total Bruto</span>
-                        <span className="text-gold font-mono text-xs">338.000 Kz</span>
+                        <span className="text-gold font-mono text-xs">440.000 Kz</span>
                     </div>
                  </div>
               </div>
@@ -265,15 +266,13 @@ function App() {
                       </h2>
                       <p className="text-[9px] text-slate-400 uppercase tracking-widest">{p.description}</p>
                     </div>
-                    {p.name !== 'Keimadura' && <span className="text-[10px] font-mono text-gold bg-gold/10 px-2 py-1 rounded">15 DIAS</span>}
                   </div>
 
-                  {p.name === 'Keimadura' ? (
+                  {p.name === 'Keimadura' && (
                     <div className="space-y-4">
                         <div className="flex gap-2">
                             <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-1 rounded-full font-bold">AUDIT OK</span>
                             <span className="text-[8px] bg-accent/10 text-accent border border-accent/20 px-2 py-1 rounded-full font-bold">SYNC ACTIVE</span>
-                            <span className="text-[8px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded-full font-bold uppercase">Electron Ready</span>
                         </div>
                         <div className="flex gap-1 h-8 items-end opacity-60">
                             {[...Array(24)].map((_, i) => (
@@ -281,26 +280,10 @@ function App() {
                             ))}
                         </div>
                     </div>
-                  ) : (
-                    <div className="space-y-3 mt-6">
-                        <div className="flex justify-between items-center text-[8px] text-slate-500 uppercase tracking-widest mb-1">
-                            <span>Checklist de Desenvolvimento</span>
-                            <span>{tasks.filter(t => t.project_id === p.id && t.is_completed).length}/{tasks.filter(t => t.project_id === p.id).length}</span>
-                        </div>
-                        {tasks.filter(t => t.project_id === p.id).map(t => (
-                        <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 cursor-pointer active:scale-95 transition-all">
-                            <div className="flex items-center gap-3">
-                                {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <Clock size={16} className="text-slate-600" />}
-                                <span className={`text-[11px] ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
-                            </div>
-                            <ChevronRight size={10} className="text-slate-700" />
-                        </div>
-                        ))}
-                    </div>
                   )}
 
                   <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : 'VALOR FIXO'}</div>
+                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : '---'}</div>
                     <button className="bg-accent/10 text-accent text-[9px] px-6 py-3 rounded-2xl font-bold border border-accent/20 hover:bg-accent hover:text-black transition-all uppercase tracking-widest">Aceder Workspace</button>
                   </div>
                 </div>
@@ -354,20 +337,6 @@ function App() {
                       </div>
                     </div>
                   ))}
-                  
-                  {/* May Placeholder to show the future */}
-                  <div className="pt-6 border-t border-white/5 opacity-40">
-                      <p className="text-[8px] text-slate-500 uppercase tracking-[4px] text-center mb-4">Próximos Meses (Maio/Junho)</p>
-                      <div className="flex justify-between items-center grayscale">
-                          <div className="flex items-center gap-5">
-                             <div className="w-12 h-12 rounded-2xl bg-white/5 border border-dashed border-white/20 flex flex-col items-center justify-center">
-                                 <span className="text-[8px]">MAI</span>
-                                 <span className="text-sm">--</span>
-                             </div>
-                             <div className="text-[10px] text-slate-400">Aguardando definição de cronograma...</div>
-                          </div>
-                      </div>
-                  </div>
                 </div>
               </div>
 
@@ -410,15 +379,6 @@ function App() {
                       <Activity size={10} className="animate-bounce" />
                       <span className="text-[8px] uppercase tracking-widest">Listening for data changes...</span>
                   </div>
-                </div>
-              </div>
-              
-              <div className="glass-card p-5">
-                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4">Dados Técnicos do Cliente</h2>
-                <div className="bg-black/60 p-4 rounded-xl font-mono text-[9px] text-accent/70 border border-white/5 space-y-1">
-                    <p>CLIENT: ACELERADOR EMPRESARIAL</p>
-                    <p>NIF: 5001970658</p>
-                    <p>BASE_VAL: 50.000 Kz/EV</p>
                 </div>
               </div>
             </motion.div>
