@@ -188,7 +188,7 @@ function App() {
               <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-accent/5">
                 <Brain className="text-accent shrink-0" size={18} />
                 <p className="text-[10px] leading-relaxed text-accent/90">
-                  "Elias, a SOL está em zona de suporte nos 67€. Estratégia de scalping sugerida se romper os 68.50€."
+                  "Core migrado para React 18 + TypeScript. Estabilidade e tipagem forte activas."
                 </p>
               </div>
 
@@ -287,6 +287,24 @@ function App() {
 
           {activeTab === 'agenda' && (
             <motion.div key="age" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
+              
+              {/* PENDENTES CRÍTICOS */}
+              <div className="glass-card p-6 border-t-4 border-red-500/50">
+                <h2 className="text-[10px] text-red-400 uppercase tracking-widest flex items-center gap-2 mb-4">
+                  <AlertCircle size={12} /> Pendentes Críticos
+                </h2>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                    <span className="text-xs text-slate-300">Fatura Evento 10/02</span>
+                    <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded border border-red-500/20">ATRASADO</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-xs text-slate-300">Visita Técnica (Margarida)</span>
+                    <span className="text-[9px] font-bold text-gold bg-gold/10 px-2 py-1 rounded border border-gold/20">25 FEV</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="glass-card p-6">
                 <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-8"><Calendar size={12} /> Roadmap de Eventos</h2>
                 <div className="space-y-6">
@@ -312,6 +330,16 @@ function App() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div className="glass-card p-6 border-t-4 border-accent/20">
+                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Plus size={12} /> Centro Fiscal</h2>
+                <div className="bg-black/80 p-5 rounded-2xl font-mono text-[9px] text-accent/80 border border-white/5 leading-loose">
+                  <span className="text-slate-600">// CLIENT DATA FOR AUTO-FILL</span><br/>
+                  NAME: ACELERADOR EMPRESARIAL LDA<br/>
+                  NIF: 5001970658<br/>
+                  ADDR: CONDOMÍNIO ZEUS, LUANDA
                 </div>
               </div>
             </motion.div>
