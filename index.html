@@ -2,22 +2,31 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Noile Xel Pro | Comando Central</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4cc9f0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="noile_xel.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #030308;
-            --card-bg: rgba(20, 20, 35, 0.7);
+            --card-bg: rgba(20, 20, 35, 0.75);
             --accent: #4cc9f0;
-            --accent-glow: rgba(76, 201, 240, 0.3);
+            --accent-glow: rgba(76, 201, 240, 0.4);
             --keimadura: #ff4d00;
             --gold: #ffb700;
             --text: #ffffff;
             --text-dim: #94a3b8;
             --success: #10b981;
             --danger: #ef4444;
-            --border: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -33,145 +42,188 @@
             flex-direction: column;
         }
 
-        /* Scanline effect */
+        /* Scanline / CRT Effect */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             background-size: 100% 4px, 3px 100%;
             pointer-events: none;
             z-index: 1000;
+            opacity: 0.5;
         }
 
         header { 
-            padding: 25px 20px; 
+            padding: 30px 20px 20px; 
             text-align: center; 
-            background: linear-gradient(to bottom, rgba(76, 201, 240, 0.05), transparent);
+            background: linear-gradient(to bottom, rgba(76, 201, 240, 0.1), transparent);
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
         
         header h1 { 
             font-weight: 200; 
-            letter-spacing: 8px; 
+            letter-spacing: 10px; 
             margin: 0; 
-            font-size: 1.2rem; 
+            font-size: 1.1rem; 
             color: var(--accent);
-            text-shadow: 0 0 15px var(--accent-glow);
+            text-shadow: 0 0 20px var(--accent-glow);
         }
         
         .main-content { 
             flex: 1; 
             overflow-y: auto; 
             padding: 20px; 
-            padding-bottom: 110px;
+            padding-bottom: 120px;
             scrollbar-width: none;
         }
         .main-content::-webkit-scrollbar { display: none; }
         
         .card { 
             background: var(--card-bg); 
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             padding: 24px; 
-            border-radius: 24px; 
+            border-radius: 28px; 
             margin-bottom: 20px; 
             border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.2s;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
         }
         
-        .card:active { transform: scale(0.98); }
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
         
         .card h2 { 
             margin-top: 0; 
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             color: var(--text-dim); 
             text-transform: uppercase; 
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
         
-        .stat-value { font-size: 2.4rem; font-weight: 600; margin: 12px 0; font-variant-numeric: tabular-nums; }
-        .stat-label { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 5px; }
+        .stat-value { font-size: 2.6rem; font-weight: 600; margin: 10px 0; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+        .stat-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
 
         .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .mini-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
-        .mini-card .val { font-size: 1.2rem; font-weight: 600; display: block; }
-        .mini-card .lab { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+        .mini-card { background: var(--glass); padding: 18px; border-radius: 22px; border: 1px solid var(--border); }
+        .mini-card .val { font-size: 1.3rem; font-weight: 600; display: block; color: var(--text); }
+        .mini-card .lab { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
         .price-row { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 14px 0;
-            border-bottom: 1px dotted var(--border);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .price-row:last-child { border-bottom: none; }
 
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
-        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .badge-warn { background: rgba(255, 183, 0, 0.15); color: var(--gold); }
-        .badge-info { background: rgba(76, 201, 240, 0.15); color: var(--accent); }
+        .badge { padding: 5px 12px; border-radius: 12px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-warn { background: rgba(255, 183, 0, 0.1); color: var(--gold); border: 1px solid rgba(255, 183, 0, 0.2); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge-info { background: rgba(76, 201, 240, 0.1); color: var(--accent); border: 1px solid rgba(76, 201, 240, 0.2); }
 
         nav { 
             position: fixed; 
-            bottom: 20px; 
+            bottom: 25px; 
             left: 20px;
             right: 20px;
-            background: rgba(15, 15, 30, 0.8); 
-            backdrop-filter: blur(25px);
+            background: rgba(15, 15, 30, 0.7); 
+            backdrop-filter: blur(30px);
             display: flex; 
             justify-content: space-around; 
-            padding: 12px;
-            border-radius: 30px;
+            padding: 14px;
+            border-radius: 35px;
             border: 1px solid var(--border);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             z-index: 100;
         }
         .nav-item { 
             color: var(--text-dim); 
             text-decoration: none; 
-            font-size: 0.65rem; 
+            font-size: 0.6rem; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 4px; 
-            min-width: 50px;
-            transition: 0.3s;
+            gap: 6px; 
+            min-width: 55px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .nav-item.active { color: var(--accent); transform: translateY(-5px); }
-        .nav-icon { font-size: 1.3rem; }
+        .nav-item.active { color: var(--accent); transform: translateY(-8px); }
+        .nav-icon { font-size: 1.4rem; filter: grayscale(1); transition: 0.3s; }
+        .nav-item.active .nav-icon { filter: grayscale(0) drop-shadow(0 0 8px var(--accent-glow)); }
 
-        .tab-content { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tab-content { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .tab-content.active { display: block; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 18px;
-            border-radius: 20px;
-            width: 100%;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-top: 15px;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--accent-glow);
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(40px) scale(0.95); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
         }
 
-        .countdown { font-family: 'JetBrains Mono', monospace; color: var(--gold); font-size: 1.1rem; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #3a86ff);
+            color: #000;
+            border: none;
+            padding: 20px;
+            border-radius: 22px;
+            width: 100%;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(76, 201, 240, 0.3);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .countdown { font-family: 'JetBrains Mono', monospace; color: var(--gold); font-size: 1.2rem; display: flex; gap: 10px; }
+        .countdown span { background: rgba(255, 183, 0, 0.15); padding: 5px 8px; border-radius: 8px; }
         
-        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 1s; }
+        .progress-container { margin: 15px 0; }
+        .progress-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #3a86ff); width: 0%; transition: 1.5s cubic-bezier(0.1, 0.5, 0.5, 1); }
+        .progress-fill::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 20px; background: white; filter: blur(5px); opacity: 0.3; }
 
         .financial-val { color: var(--gold); font-family: 'JetBrains Mono', monospace; }
+        
+        /* New Health Graph */
+        .health-grid { display: flex; gap: 4px; height: 30px; align-items: flex-end; margin-top: 10px; }
+        .health-bar { flex: 1; background: var(--success); border-radius: 2px; opacity: 0.3; transition: 0.3s; }
+        .health-bar.active { opacity: 1; box-shadow: 0 0 10px var(--success); }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--accent);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 2000;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
+    <div id="toast" class="toast">Sincronização PWA Ativa</div>
+
     <header>
         <h1 id="clock">00:00:00</h1>
     </header>
@@ -181,9 +233,14 @@
         <div id="finance" class="tab-content active">
             <div class="card">
                 <h2>💰 Capital Total Projectado</h2>
-                <div class="stat-value financial-val">338.000 <span style="font-size: 1rem;">Kz</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width: 15%;"></div></div>
-                <div class="sub-stat" style="font-size: 0.8rem; color: var(--text-dim);">Faturação em curso: Piedade Londa (88k)</div>
+                <div class="stat-value financial-val">338.000 <span style="font-size: 1.2rem;">Kz</span></div>
+                <div class="progress-container">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-dim); margin-bottom:8px;">
+                        <span>Progresso de Faturação</span>
+                        <span>15%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 15%;"></div></div>
+                </div>
             </div>
             
             <div class="grid-stats">
@@ -192,33 +249,46 @@
                     <span class="val financial-val">250k</span>
                 </div>
                 <div class="mini-card">
-                    <span class="lab">Outros</span>
+                    <span class="lab">Piedade</span>
                     <span class="val financial-val">88k</span>
                 </div>
             </div>
 
             <div class="card">
-                <h2>📈 Status Kraken</h2>
-                <div class="price-row"><span>Carteira EUR</span><span class="financial-val">9.98 €</span></div>
+                <h2>📈 Trading Assets (Kraken)</h2>
+                <div class="price-row"><span>Carteira Euro</span><span class="financial-val">9.98 €</span></div>
                 <div class="price-row"><span>Solana (SOL)</span><span>0.045 <span class="badge badge-warn">Recuperando</span></span></div>
+                <div class="price-row"><span>BTC/EUR</span><span style="font-family:'JetBrains Mono';">56,567.20</span></div>
             </div>
         </div>
 
         <!-- TAB 2: PROJETOS -->
         <div id="projects" class="tab-content">
-            <div class="card" style="border-left: 4px solid var(--accent);">
-                <h2>🍰 Mãos da Daddy</h2>
-                <div class="stat-label">Loja Digital PWA + Admin</div>
-                <div class="countdown" id="deadline">15d 00h 00m</div>
-                <div class="price-row" style="margin-top:15px;"><span>Valor:</span><span class="financial-val">88.000 Kz</span></div>
-                <button class="btn-primary" onclick="window.location.href='admin/gerenciadorloja'">PAINEL ADMIN</button>
+            <div class="card" style="border-left: 6px solid var(--accent);">
+                <h2>🍰 Mãos da Daddy (PWA Store)</h2>
+                <div class="stat-label">Desenvolvimento em curso</div>
+                <div class="countdown" id="deadline">
+                    <span id="d-days">00</span><span id="d-hours">00</span><span id="d-mins">00</span>
+                </div>
+                <div class="price-row" style="margin-top:20px;">
+                    <span style="font-size:0.8rem; color:var(--text-dim);">Fatura (Amanhã):</span>
+                    <span class="financial-val">88.000 Kz</span>
+                </div>
+                <div class="progress-container">
+                    <div style="font-size:0.6rem; color:var(--text-dim); margin-bottom:5px;">Roadmap: Setup Incial + SEO</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 10%;"></div></div>
+                </div>
+                <button class="btn-primary" onclick="showToast('Abrindo Painel do Desenvolvedor...')">Aceder Workspace</button>
             </div>
 
-            <div class="card" style="border-left: 4px solid var(--keimadura);">
-                <h2>🌋 Keimadura</h2>
-                <div class="stat-label">Code Audit & Base Sync</div>
-                <div class="badge badge-success">Sincronizado</div>
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 10px;">Aguardando expansão de módulos.</p>
+            <div class="card" style="border-left: 6px solid var(--keimadura);">
+                <h2>🌋 Projeto Keimadura</h2>
+                <div class="stat-label">Base Code & Security Audit</div>
+                <div style="display:flex; gap:10px; margin: 15px 0;">
+                    <span class="badge badge-success">Sincronizado</span>
+                    <span class="badge badge-info">Electron Ready</span>
+                </div>
+                <div class="health-grid" id="healthGrid"></div>
             </div>
         </div>
 
@@ -228,48 +298,40 @@
                 <h2>📅 Próximos Eventos</h2>
                 <div class="price-row">
                     <div>
-                        <div style="font-size: 0.9rem;">Conexão Giants</div>
-                        <div style="font-size: 0.7rem; color: var(--text-dim);">24 Fev | Sala Master</div>
+                        <div style="font-size: 0.95rem; font-weight: 600;">Conexão Giants</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">24 Fev | Sala Master</div>
                     </div>
                     <span class="badge badge-info">50k Kz</span>
                 </div>
                 <div class="price-row">
                     <div>
-                        <div style="font-size: 0.9rem;">Workshop Acelere</div>
-                        <div style="font-size: 0.7rem; color: var(--text-dim);">27 Fev | Casa das Artes</div>
+                        <div style="font-size: 0.95rem; font-weight: 600;">Workshop Acelere</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">27 Fev | Casa das Artes</div>
                     </div>
                     <span class="badge badge-info">50k Kz</span>
                 </div>
-                <div class="price-row" style="opacity: 0.6;">
+                <div class="price-row">
                     <div>
-                        <div style="font-size: 0.9rem;">Day Training B2B</div>
-                        <div style="font-size: 0.7rem; color: var(--text-dim);">13 Mar | Luanda</div>
-                    </div>
-                    <span class="badge badge-info">50k Kz</span>
-                </div>
-                <div class="price-row" style="opacity: 0.6;">
-                    <div>
-                        <div style="font-size: 0.9rem;">Conexão Giants</div>
-                        <div style="font-size: 0.7rem; color: var(--text-dim);">19 Mar | Sala Master</div>
+                        <div style="font-size: 0.95rem; font-weight: 600;">Day Training B2B</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">13 Mar | Local a Definir</div>
                     </div>
                     <span class="badge badge-info">50k Kz</span>
                 </div>
             </div>
             
             <div class="card">
-                <h2>📋 Dados Fiscais (Grupo Acelerador)</h2>
-                <div style="font-size: 0.75rem; color: var(--text-dim); line-height: 1.6;">
-                    NIF: <span style="color: var(--text);">5001970658</span><br>
-                    Domicílio: <span style="color: var(--text);">Condomínio Zeus</span><br>
-                    Razão Social: <span style="color: var(--text);">Acelerador Empresarial - Comércio & Serviços, LDA</span>
+                <h2>📋 Dados de Faturação</h2>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border: 1px solid var(--border);">
+                    CLIENTE: ACELERADOR EMPRESARIAL<br>
+                    NIF: 5001970658<br>
+                    DOMICÍLIO: CONDOMÍNIO ZEUS
                 </div>
             </div>
 
             <div class="card">
-                <h2>⚠️ Pendente</h2>
-                <div class="price-row"><span>Fatura Acelerador (10/02)</span><span class="badge badge-danger">ATRASADO</span></div>
-                <div class="price-row"><span>Visita Técnica (Margarida)</span><span class="badge badge-info">25 FEV</span></div>
-                <div class="price-row"><span>Fatura Piedade Londa</span><span class="badge badge-warn">AMANHÃ</span></div>
+                <h2>⚠️ Pendentes Críticos</h2>
+                <div class="price-row"><span>Fatura Evento 10/02</span><span class="badge badge-danger">ATRASADO</span></div>
+                <div class="price-row"><span>Visita Técnica (Margarida)</span><span class="badge badge-warn">25 FEV</span></div>
             </div>
         </div>
 
@@ -277,25 +339,27 @@
         <div id="system" class="tab-content">
             <div class="card">
                 <h2>🧠 Noile Xel Engine</h2>
-                <div class="price-row"><span>Status</span><span class="badge badge-success">ONLINE</span></div>
-                <div class="price-row"><span>Voz</span><span>George (ElevenLabs)</span></div>
-                <div class="price-row"><span>Túnel</span><span style="font-size: 0.7rem; color: var(--accent);">Active Cloudflare Tunnel</span></div>
+                <div class="price-row"><span>Status Global</span><span class="badge badge-success">Operacional</span></div>
+                <div class="price-row"><span>Motor de IA</span><span>Gemini 3 Pro</span></div>
+                <div class="price-row"><span>Voz Neural</span><span>George (Professional)</span></div>
+                <div class="price-row"><span>Localização</span><span>Luanda, Angola</span></div>
             </div>
-            <div class="card">
-                <h2>📡 Logs Recentes</h2>
-                <pre style="font-size: 0.6rem; color: var(--accent); opacity: 0.7; overflow: hidden;">
-[SYSTEM] Cron job fired (09:00)
-[KRAKEN] Price check SOL: 67.84 EUR
-[DASHBOARD] Financials recalculated
-[MAOS_DADDY] SEO profile initialized
-                </pre>
+            
+            <div class="card" style="background: #000;">
+                <h2>📡 System Logs</h2>
+                <div id="logs" style="font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--accent); line-height: 1.8;">
+                    > [10:45] PWA Service Worker Registered<br>
+                    > [10:48] Financial Cache Updated<br>
+                    > [10:52] GitHub Sync Successful<br>
+                    > [11:00] Standing by for user input...
+                </div>
             </div>
         </div>
     </div>
 
     <nav>
         <a href="#" class="nav-item active" onclick="showTab('finance', this)">
-            <span class="nav-icon">💎</span><span>Finanças</span>
+            <span class="nav-icon">💰</span><span>Balanço</span>
         </a>
         <a href="#" class="nav-item" onclick="showTab('projects', this)">
             <span class="nav-icon">🚀</span><span>Projetos</span>
@@ -304,11 +368,12 @@
             <span class="nav-icon">📅</span><span>Agenda</span>
         </a>
         <a href="#" class="nav-item" onclick="showTab('system', this)">
-            <span class="nav-icon">⚙️</span><span>Sitema</span>
+            <span class="nav-icon">⚙️</span><span>Núcleo</span>
         </a>
     </nav>
 
     <script>
+        // Tab System
         function showTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -316,6 +381,7 @@
             el.classList.add('active');
         }
 
+        // Clock
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('pt-PT');
@@ -323,20 +389,54 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Simple countdown for Mãos da Daddy (Feb 27)
+        // Countdown for Mãos da Daddy (Feb 27)
         function updateCountdown() {
             const target = new Date("2026-02-27T00:00:00").getTime();
             const now = new Date().getTime();
             const diff = target - now;
             
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
-            document.getElementById('deadline').innerText = `${days}d ${hours}h ${mins}m`;
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById('d-days').innerText = String(days).padStart(2, '0') + 'd';
+                document.getElementById('d-hours').innerText = String(hours).padStart(2, '0') + 'h';
+                document.getElementById('d-mins').innerText = String(mins).padStart(2, '0') + 'm';
+            }
         }
         setInterval(updateCountdown, 60000);
         updateCountdown();
+
+        // Health Grid Simulation
+        const grid = document.getElementById('healthGrid');
+        for(let i=0; i<20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'health-bar';
+            bar.style.height = (Math.random() * 20 + 10) + 'px';
+            if(Math.random() > 0.2) bar.classList.add('active');
+            grid.appendChild(bar);
+        }
+
+        // Toast System
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('SW Registered');
+                }).catch(err => console.log('SW Error', err));
+            });
+        }
+        
+        // Show welcome toast
+        setTimeout(() => showToast('Sistema Noile Xel Online 🌌'), 1000);
     </script>
 </body>
 </html>
