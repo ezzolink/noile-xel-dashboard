@@ -1,16 +1,26 @@
-# React + Vite
+# 🌌 Noile Xel Dashboard PRO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **Noile Xel Dashboard PRO** é uma plataforma de gestão empresarial de elite, desenhada para centralizar projetos, finanças e automação inteligente do Elias Sebastião. Esta versão evoluiu de um simples painel estático para uma aplicação **React + Supabase** de alta performance.
 
-Currently, two official plugins are available:
+## 💎 Funcionalidades de Elite
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **📊 Gestão Financeira Real-Time:** Cálculo dinâmico de Cashflow (Balanço Líquido), acompanhamento de capital projectado e monitorização de preços de mercado (SOL/BTC).
+- **📄 Gerador de Faturas PDF:** Emissão automática de Notas de Honorários profissionais em formato PDF diretamente da aba de Agenda.
+- **🤖 Noile Xel AI Insights:** Sistema de inteligência proativa que analisa dados e deixa lembretes estratégicos no painel.
+- **🚀 Gestão de Projetos (Kanban):** Sistema de tarefas (Checklist) integrado a cada projeto para acompanhamento granular de progresso.
+- **📱 Experiência PWA Avançada:** Instalável no telemóvel com interface ultra-fluida, animações premium e notificações toast.
+- **🛡️ Persistência Supabase:** Sincronização em tempo real entre o agente e a interface web.
 
-## React Compiler
+## 🛠 Stack Tecnológica
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion (Animações).
+- **Backend:** Supabase (PostgreSQL + Realtime).
+- **Bibliotecas Pro:** jsPDF (Documentação), Recharts (Visualização), Lucide (Iconografia).
+- **Deployment:** Netlify (CI/CD Automático).
 
-## Expanding the ESLint configuration
+## 🤖 Operação do Agente
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+O Noile Xel actua como o "Backend Inteligente", alimentando o banco de dados via API e monitorizando eventos críticos para manter o Elias sempre no controlo da sua operação digital.
+
+---
+*Powered by Noile Xel Engine | Elias Sebastião Enterprise 2026*
