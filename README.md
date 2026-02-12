@@ -4,18 +4,20 @@ O **Noile Xel Dashboard** é o centro de comando centralizado para a gestão de 
 
 ## 🚀 Funcionalidades
 
-- **💰 Gestão Financeira:** Acompanhamento de capital projectado, faturamentos em curso e status de pagamentos.
-- **📅 Agenda Inteligente:** Visualização de eventos futuros, visitas técnicas e prazos de entrega de projetos.
-- **🍰 Gestão de Projetos:** Monitorização dedicada para projetos como "Mãos da Daddy" e "Keimadura".
-- **⚙️ Integração de Sistema:** Monitorização em tempo real do estado do agente Noile Xel e logs de sistema.
-- **📱 Design Mobile-First:** Totalmente optimizado para dispositivos móveis com estética premium e modo escuro.
+- **📱 Experiência PWA Completa:** Pode ser instalado como uma aplicação nativa no telemóvel, com suporte offline básico e ícone dedicado.
+- **💰 Gestão Financeira Avançada:** Acompanhamento de capital projectado (338.000 Kz), progresso de faturação e status de trading na Kraken (SOL/BTC).
+- **📅 Agenda & Faturação:** Visualização de eventos futuros, dados fiscais do Grupo Acelerador (NIF/Domicílio) e alertas de faturas atrasadas.
+- **🍰 Monitorização de Projetos:** Contagem decrescente em tempo real para o projeto "Mãos da Daddy" e acompanhamento de roadmap.
+- **🛡️ Auditoria de Sistema:** Gráfico de integridade para projetos como "Keimadura" e logs de sistema em tempo real.
+- **✨ Interface Premium:** Design com Glassmorphism, notificações toast, animações fluidas e modo ultra-escuro.
 
 ## 🛠 Tecnologias
 
-- **HTML5 & CSS3:** Design personalizado com Glassmorphism e animações fluidas.
-- **JavaScript:** Lógica de interface e actualização dinâmica de dados.
-- **Google Fonts (Outfit & JetBrains Mono):** Tipografia moderna e técnica.
-- **Netlify:** Deployment contínuo e hosting de alta disponibilidade.
+- **HTML5 & CSS3:** Design personalizado com variáveis dinâmicas e efeitos CRT/Scanline.
+- **JavaScript (ES6+):** Lógica de interface, Service Workers para PWA e manipulação de DOM em tempo real.
+- **PWA Tech:** `manifest.json` e `sw.js` para instalação e cache.
+- **Google Fonts:** Outfit (Interface) & JetBrains Mono (Dados técnicos).
+- **Netlify:** Deployment contínuo e hosting global.
 
 ## 🤖 Sobre o Noile Xel
 
