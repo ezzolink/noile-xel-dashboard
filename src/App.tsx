@@ -188,7 +188,7 @@ function App() {
               <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-accent/5">
                 <Brain className="text-accent shrink-0" size={18} />
                 <p className="text-[10px] leading-relaxed text-accent/90">
-                  "Core migrado para React 18 + TypeScript. Estabilidade e tipagem forte activas."
+                  "Elias, a SOL está em zona de suporte nos 67€. Estratégia de scalping sugerida se romper os 68.50€."
                 </p>
               </div>
 
@@ -238,31 +238,46 @@ function App() {
           {activeTab === 'projects' && (
             <motion.div key="proj" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="space-y-5">
               {projects.map(p => (
-                <div key={p.id} className="glass-card p-6 border-l-4 border-accent relative overflow-hidden group">
+                <div key={p.id} className={`glass-card p-6 relative overflow-hidden group ${p.name === 'Keimadura' ? 'border-l-4 border-keimadura' : 'border-l-4 border-accent'}`}>
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h2 className="text-lg font-semibold flex items-center gap-2">
-                        {p.name} <Zap size={14} className="text-gold animate-pulse" />
+                        {p.name} {p.name === 'Keimadura' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Zap size={14} className="text-gold animate-pulse" />}
                       </h2>
                       <p className="text-[9px] text-slate-400 uppercase tracking-widest">{p.description}</p>
                     </div>
-                    <span className="text-[10px] font-mono text-gold bg-gold/10 px-2 py-1 rounded">15 DIAS</span>
+                    {p.name !== 'Keimadura' && <span className="text-[10px] font-mono text-gold bg-gold/10 px-2 py-1 rounded">15 DIAS</span>}
                   </div>
 
-                  <div className="space-y-3 mt-6">
-                    {tasks.filter(t => t.project_id === p.id).map(t => (
-                      <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 cursor-pointer active:scale-95 transition-all">
-                        <div className="flex items-center gap-3">
-                            {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <Clock size={16} className="text-slate-600" />}
-                            <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
+                  {p.name === 'Keimadura' ? (
+                    <div className="space-y-4">
+                        <div className="flex gap-2">
+                            <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-1 rounded-full font-bold">AUDIT OK</span>
+                            <span className="text-[8px] bg-accent/10 text-accent border border-accent/20 px-2 py-1 rounded-full font-bold">SYNC ACTIVE</span>
+                            <span className="text-[8px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded-full font-bold uppercase">Electron Ready</span>
                         </div>
-                        <ArrowUpRight size={12} className="text-slate-700 opacity-0 group-hover:opacity-100" />
-                      </div>
-                    ))}
-                  </div>
+                        <div className="flex gap-1 h-8 items-end opacity-60">
+                            {[...Array(24)].map((_, i) => (
+                                <div key={i} className="flex-1 bg-emerald-500 rounded-sm" style={{ height: `${Math.random() * 40 + 60}%`, opacity: Math.random() > 0.2 ? 1 : 0.2 }}></div>
+                            ))}
+                        </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 mt-6">
+                        {tasks.filter(t => t.project_id === p.id).map(t => (
+                        <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 cursor-pointer active:scale-95 transition-all">
+                            <div className="flex items-center gap-3">
+                                {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <Clock size={16} className="text-slate-600" />}
+                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
+                            </div>
+                            <ArrowUpRight size={12} className="text-slate-700" />
+                        </div>
+                        ))}
+                    </div>
+                  )}
 
                   <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-                    <div className="text-lg font-mono text-gold font-bold">{p.value?.toLocaleString()} <span className="text-[10px]">Kz</span></div>
+                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : '---'}</div>
                     <button className="bg-accent/10 text-accent text-[10px] px-6 py-3 rounded-2xl font-bold border border-accent/20 hover:bg-accent hover:text-black transition-all">WORKSPACE</button>
                   </div>
                 </div>
@@ -288,10 +303,12 @@ function App() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <span className="text-xs font-mono font-bold text-gold">{ev.value?.toLocaleString()} Kz</span>
-                        <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent group-hover:translate-x-1 transition-all">
-                            <Download size={16} className="text-accent group-hover:text-black" />
-                        </button>
+                        <span className="text-xs font-mono font-bold text-gold">{ev.value > 0 ? `${ev.value?.toLocaleString()} Kz` : '---'}</span>
+                        {ev.value > 0 && (
+                            <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent group-hover:translate-x-1 transition-all">
+                                <Download size={16} className="text-accent group-hover:text-black" />
+                            </button>
+                        )}
                       </div>
                     </div>
                   ))}
