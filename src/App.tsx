@@ -4,7 +4,7 @@ import {
   Wallet, Rocket, Calendar, Settings, ArrowUpRight, ArrowDownRight,
   CheckCircle2, Clock, AlertCircle, Activity, FileText, Plus,
   TrendingUp, TrendingDown, DollarSign, Brain, Bell, Download,
-  LayoutDashboard, ShieldCheck, Zap
+  LayoutDashboard, ShieldCheck, Zap, History, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
@@ -89,7 +89,7 @@ function App() {
         const { data: evs } = await supabase.from('events').select('*').order('date', { ascending: true });
         if (evs) setEvents(evs);
 
-        const { data: lg } = await supabase.from('logs').select('*').order('created_at', { ascending: false }).limit(5);
+        const { data: lg } = await supabase.from('logs').select('*').order('created_at', { ascending: false }).limit(20);
         if (lg) setLogs(lg);
 
         const { data: mk } = await supabase.from('market_prices').select('*');
@@ -165,6 +165,9 @@ function App() {
     await supabase.from('tasks').update({ is_completed: !currentStatus }).eq('id', taskId);
   };
 
+  const upcomingEvents = events.filter(ev => new Date(ev.date) >= new Date());
+  const pastEvents = events.filter(ev => new Date(ev.date) < new Date());
+
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto relative px-5">
       <header className="pt-8 pb-4 flex justify-between items-center px-2">
@@ -188,19 +191,22 @@ function App() {
               <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-accent/5">
                 <Brain className="text-accent shrink-0" size={18} />
                 <p className="text-[10px] leading-relaxed text-accent/90">
-                  "Core migrado para React 18 + TypeScript. Estabilidade e tipagem forte activas."
+                  "Sincronização total activada. Todas as métricas de Fevereiro e Março estão visíveis agora."
                 </p>
               </div>
 
               <div className="glass-card p-6 overflow-hidden relative">
                 <div className="relative z-10">
                     <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Wallet size={12} /> Projecção Financeira
+                    <Wallet size={12} /> Património Projectado (Fev/Mar)
                     </h2>
                     <div className="text-4xl font-semibold mt-4 mb-2 flex items-baseline gap-2">
                     {netProfit.toLocaleString('pt-PT')} <span className="text-sm text-gold font-mono">Kz</span>
                     </div>
-                    <p className="text-[9px] text-slate-500 font-mono">LUCRO LÍQUIDO ESTIMADO</p>
+                    <div className="flex justify-between items-center mt-4">
+                        <p className="text-[9px] text-slate-500 font-mono uppercase">Liquidez Esperada</p>
+                        <span className="text-[10px] text-emerald-400 font-bold tracking-tighter">+85% vs JAN</span>
+                    </div>
                 </div>
                 
                 <div className="absolute inset-0 top-16 opacity-30 pointer-events-none">
@@ -231,6 +237,24 @@ function App() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="glass-card p-5">
+                 <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4">Breakdown de Facturação</h2>
+                 <div className="space-y-4">
+                    <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-slate-300">Grupo Acelerador (Total)</span>
+                        <span className="text-emerald-400 font-mono">+250.000 Kz</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-slate-300">Mãos da Daddy (Projecto)</span>
+                        <span className="text-emerald-400 font-mono">+88.000 Kz</span>
+                    </div>
+                    <div className="pt-2 border-t border-white/5 flex justify-between items-center text-[10px] font-bold">
+                        <span className="text-slate-100 uppercase tracking-widest">Total Bruto</span>
+                        <span className="text-gold font-mono text-xs">338.000 Kz</span>
+                    </div>
+                 </div>
               </div>
             </motion.div>
           )}
@@ -264,21 +288,25 @@ function App() {
                     </div>
                   ) : (
                     <div className="space-y-3 mt-6">
+                        <div className="flex justify-between items-center text-[8px] text-slate-500 uppercase tracking-widest mb-1">
+                            <span>Checklist de Desenvolvimento</span>
+                            <span>{tasks.filter(t => t.project_id === p.id && t.is_completed).length}/{tasks.filter(t => t.project_id === p.id).length}</span>
+                        </div>
                         {tasks.filter(t => t.project_id === p.id).map(t => (
                         <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 cursor-pointer active:scale-95 transition-all">
                             <div className="flex items-center gap-3">
                                 {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <Clock size={16} className="text-slate-600" />}
-                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
+                                <span className={`text-[11px] ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
                             </div>
-                            <ArrowUpRight size={12} className="text-slate-700" />
+                            <ChevronRight size={10} className="text-slate-700" />
                         </div>
                         ))}
                     </div>
                   )}
 
                   <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : '---'}</div>
-                    <button className="bg-accent/10 text-accent text-[10px] px-6 py-3 rounded-2xl font-bold border border-accent/20 hover:bg-accent hover:text-black transition-all">WORKSPACE</button>
+                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : 'VALOR FIXO'}</div>
+                    <button className="bg-accent/10 text-accent text-[9px] px-6 py-3 rounded-2xl font-bold border border-accent/20 hover:bg-accent hover:text-black transition-all uppercase tracking-widest">Aceder Workspace</button>
                   </div>
                 </div>
               ))}
@@ -295,51 +323,75 @@ function App() {
                 </h2>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-white/5">
-                    <span className="text-xs text-slate-300">Fatura Evento 10/02</span>
-                    <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded border border-red-500/20">ATRASADO</span>
+                    <span className="text-xs text-slate-300 font-medium">Fatura Evento 10/02</span>
+                    <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 uppercase">Atrasado</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-xs text-slate-300">Visita Técnica (Margarida)</span>
-                    <span className="text-[9px] font-bold text-gold bg-gold/10 px-2 py-1 rounded border border-gold/20">25 FEV</span>
+                    <span className="text-xs text-slate-300 font-medium">Visita Técnica (Margarida)</span>
+                    <span className="text-[9px] font-bold text-gold bg-gold/10 px-2 py-1 rounded border border-gold/20 uppercase">25 FEV</span>
                   </div>
                 </div>
               </div>
 
+              {/* ROADMAP FULL VIEW */}
               <div className="glass-card p-6">
-                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-8"><Calendar size={12} /> Roadmap de Eventos</h2>
+                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-8"><Calendar size={12} /> Roadmap Full View (Q1/Q2)</h2>
                 <div className="space-y-6">
-                  {events.map((ev, i) => (
+                  {upcomingEvents.map((ev, i) => (
                     <div key={i} className="flex justify-between items-center group">
                       <div className="flex items-center gap-5">
-                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/10">
+                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/10 group-hover:border-accent/30 transition-all">
                             <span className="text-[9px] text-accent font-bold uppercase">{new Date(ev.date).toLocaleDateString('pt-PT', {month: 'short'})}</span>
                             <span className="text-lg font-bold">{new Date(ev.date).getDate()}</span>
                         </div>
                         <div>
                           <div className="text-sm font-semibold tracking-tight">{ev.title}</div>
-                          <div className="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter">{ev.location}</div>
+                          <div className="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter font-mono">{ev.location}</div>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <span className="text-xs font-mono font-bold text-gold">{ev.value > 0 ? `${ev.value?.toLocaleString()} Kz` : '---'}</span>
                         {ev.value > 0 && (
-                            <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent group-hover:translate-x-1 transition-all">
+                            <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent transition-all">
                                 <Download size={16} className="text-accent group-hover:text-black" />
                             </button>
                         )}
                       </div>
                     </div>
                   ))}
+                  
+                  {/* May Placeholder to show the future */}
+                  <div className="pt-6 border-t border-white/5 opacity-40">
+                      <p className="text-[8px] text-slate-500 uppercase tracking-[4px] text-center mb-4">Próximos Meses (Maio/Junho)</p>
+                      <div className="flex justify-between items-center grayscale">
+                          <div className="flex items-center gap-5">
+                             <div className="w-12 h-12 rounded-2xl bg-white/5 border border-dashed border-white/20 flex flex-col items-center justify-center">
+                                 <span className="text-[8px]">MAI</span>
+                                 <span className="text-sm">--</span>
+                             </div>
+                             <div className="text-[10px] text-slate-400">Aguardando definição de cronograma...</div>
+                          </div>
+                      </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="glass-card p-6 border-t-4 border-accent/20">
-                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Plus size={12} /> Centro Fiscal</h2>
-                <div className="bg-black/80 p-5 rounded-2xl font-mono text-[9px] text-accent/80 border border-white/5 leading-loose">
-                  <span className="text-slate-600">// CLIENT DATA FOR AUTO-FILL</span><br/>
-                  NAME: ACELERADOR EMPRESARIAL LDA<br/>
-                  NIF: 5001970658<br/>
-                  ADDR: CONDOMÍNIO ZEUS, LUANDA
+              {/* HISTÓRICO DE EVENTOS */}
+              <div className="glass-card p-6 bg-black/40 border-dashed border border-white/10">
+                <h2 className="text-[10px] text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-6"><History size={12} /> Histórico de Actividade</h2>
+                <div className="space-y-4">
+                  {pastEvents.map((ev, i) => (
+                    <div key={i} className="flex justify-between items-center opacity-60">
+                      <div className="flex items-center gap-4">
+                        <CheckCircle2 size={14} className="text-emerald-500" />
+                        <div>
+                          <div className="text-xs font-medium text-slate-200">{ev.title}</div>
+                          <div className="text-[9px] text-slate-500 font-mono">{new Date(ev.date).toLocaleDateString('pt-PT')}</div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">{ev.value?.toLocaleString()} Kz</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </motion.div>
@@ -347,17 +399,31 @@ function App() {
 
           {activeTab === 'system' && (
             <motion.div key="sys" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
-              <div className="glass-card p-6 bg-black/95 font-mono relative overflow-hidden">
+              <div className="glass-card p-6 bg-black/95 font-mono relative overflow-hidden shadow-2xl">
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                        <span className="text-[10px] text-accent uppercase tracking-tighter">TypeScript Live Monitor</span>
+                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_#4cc9f0]"></span>
+                        <span className="text-[10px] text-accent uppercase tracking-tighter font-bold">Enterprise Live Monitor</span>
                     </div>
+                    <span className="text-[8px] text-slate-700">TS-2.6.0-STABLE</span>
                 </div>
-                <div className="space-y-3 text-[9px] text-accent/60 leading-relaxed max-h-48 overflow-y-auto pr-2 scrollbar-hide">
+                <div className="space-y-3 text-[9px] text-accent/60 leading-relaxed max-h-80 overflow-y-auto pr-2 scrollbar-hide">
                   {logs.map(l => (
-                    <p key={l.id} className="border-l border-accent/20 pl-3 py-1">{`> [${new Date(l.created_at).toLocaleTimeString()}] ${l.message}`}</p>
+                    <p key={l.id} className="border-l border-accent/20 pl-3 py-2 bg-white/[0.02] rounded-r-lg">{`> [${new Date(l.created_at).toLocaleTimeString()}] ${l.message}`}</p>
                   ))}
+                  <div className="flex gap-2 items-center text-emerald-500/50 mt-4">
+                      <Activity size={10} className="animate-bounce" />
+                      <span className="text-[8px] uppercase tracking-widest">Listening for data changes...</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="glass-card p-5">
+                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4">Dados Técnicos do Cliente</h2>
+                <div className="bg-black/60 p-4 rounded-xl font-mono text-[9px] text-accent/70 border border-white/5 space-y-1">
+                    <p>CLIENT: ACELERADOR EMPRESARIAL</p>
+                    <p>NIF: 5001970658</p>
+                    <p>BASE_VAL: 50.000 Kz/EV</p>
                 </div>
               </div>
             </motion.div>
@@ -382,7 +448,7 @@ function App() {
         <div className="absolute inset-0 bg-bg/95 backdrop-blur-3xl z-[3000] flex items-center justify-center">
           <div className="flex flex-col items-center gap-8">
             <Activity className="text-accent animate-spin" size={60} />
-            <span className="text-[12px] text-accent font-mono tracking-[12px] animate-pulse">TS-BOOTING</span>
+            <span className="text-[12px] text-accent font-mono tracking-[12px] animate-pulse uppercase">Syncing Node</span>
           </div>
         </div>
       )}
