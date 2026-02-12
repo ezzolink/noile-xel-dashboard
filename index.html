@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noile Xel Pro | Comando Central</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030308;
+            --card-bg: rgba(20, 20, 35, 0.7);
+            --accent: #4cc9f0;
+            --accent-glow: rgba(76, 201, 240, 0.3);
+            --keimadura: #ff4d00;
+            --gold: #ffb700;
+            --text: #ffffff;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body { 
+            margin: 0; 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            height: 100vh; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scanline effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        header { 
+            padding: 25px 20px; 
+            text-align: center; 
+            background: linear-gradient(to bottom, rgba(76, 201, 240, 0.05), transparent);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        header h1 { 
+            font-weight: 200; 
+            letter-spacing: 8px; 
+            margin: 0; 
+            font-size: 1.2rem; 
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 20px; 
+            padding-bottom: 110px;
+            scrollbar-width: none;
+        }
+        .main-content::-webkit-scrollbar { display: none; }
+        
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(15px);
+            padding: 24px; 
+            border-radius: 24px; 
+            margin-bottom: 20px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+        
+        .card:active { transform: scale(0.98); }
+        
+        .card h2 { 
+            margin-top: 0; 
+            font-size: 0.75rem; 
+            color: var(--text-dim); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value { font-size: 2.4rem; font-weight: 600; margin: 12px 0; font-variant-numeric: tabular-nums; }
+        .stat-label { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 5px; }
+
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .mini-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
+        .mini-card .val { font-size: 1.2rem; font-weight: 600; display: block; }
+        .mini-card .lab { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+
+        .price-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 14px 0;
+            border-bottom: 1px dotted var(--border);
+        }
+        .price-row:last-child { border-bottom: none; }
+
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge-warn { background: rgba(255, 183, 0, 0.15); color: var(--gold); }
+        .badge-info { background: rgba(76, 201, 240, 0.15); color: var(--accent); }
+
+        nav { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 15, 30, 0.8); 
+            backdrop-filter: blur(25px);
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+        .nav-item { 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            font-size: 0.65rem; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 4px; 
+            min-width: 50px;
+            transition: 0.3s;
+        }
+        .nav-item.active { color: var(--accent); transform: translateY(-5px); }
+        .nav-icon { font-size: 1.3rem; }
+
+        .tab-content { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tab-content.active { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            width: 100%;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .countdown { font-family: 'JetBrains Mono', monospace; color: var(--gold); font-size: 1.1rem; }
+        
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin: 10px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 1s; }
+
+        .financial-val { color: var(--gold); font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id="clock">00:00:00</h1>
+    </header>
+
+    <div class="main-content">
+        <!-- TAB 1: FINANCEIRO -->
+        <div id="finance" class="tab-content active">
+            <div class="card">
+                <h2>💰 Capital Total Projectado</h2>
+                <div class="stat-value financial-val">338.000 <span style="font-size: 1rem;">Kz</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 15%;"></div></div>
+                <div class="sub-stat" style="font-size: 0.8rem; color: var(--text-dim);">Faturação em curso: Piedade Londa (88k)</div>
+            </div>
+            
+            <div class="grid-stats">
+                <div class="mini-card">
+                    <span class="lab">Acelerador</span>
+                    <span class="val financial-val">250k</span>
+                </div>
+                <div class="mini-card">
+                    <span class="lab">Outros</span>
+                    <span class="val financial-val">88k</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Status Kraken</h2>
+                <div class="price-row"><span>Carteira EUR</span><span class="financial-val">9.98 €</span></div>
+                <div class="price-row"><span>Solana (SOL)</span><span>0.045 <span class="badge badge-warn">Recuperando</span></span></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PROJETOS -->
+        <div id="projects" class="tab-content">
+            <div class="card" style="border-left: 4px solid var(--accent);">
+                <h2>🍰 Mãos da Daddy</h2>
+                <div class="stat-label">Loja Digital PWA + Admin</div>
+                <div class="countdown" id="deadline">15d 00h 00m</div>
+                <div class="price-row" style="margin-top:15px;"><span>Valor:</span><span class="financial-val">88.000 Kz</span></div>
+                <button class="btn-primary" onclick="window.location.href='admin/gerenciadorloja'">PAINEL ADMIN</button>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--keimadura);">
+                <h2>🌋 Keimadura</h2>
+                <div class="stat-label">Code Audit & Base Sync</div>
+                <div class="badge badge-success">Sincronizado</div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 10px;">Aguardando expansão de módulos.</p>
+            </div>
+        </div>
+
+        <!-- TAB 3: AGENDA -->
+        <div id="agenda" class="tab-content">
+            <div class="card">
+                <h2>📅 Próximos Eventos</h2>
+                <div class="price-row">
+                    <div>
+                        <div style="font-size: 0.9rem;">Conexão Giants</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">24 Fev | Sala Master</div>
+                    </div>
+                    <span class="badge badge-info">50k Kz</span>
+                </div>
+                <div class="price-row">
+                    <div>
+                        <div style="font-size: 0.9rem;">Workshop Acelere</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">27 Fev | Casa das Artes</div>
+                    </div>
+                    <span class="badge badge-info">50k Kz</span>
+                </div>
+                <div class="price-row" style="opacity: 0.6;">
+                    <div>
+                        <div style="font-size: 0.9rem;">Day Training B2B</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">13 Mar | Luanda</div>
+                    </div>
+                    <span class="badge badge-info">50k Kz</span>
+                </div>
+                <div class="price-row" style="opacity: 0.6;">
+                    <div>
+                        <div style="font-size: 0.9rem;">Conexão Giants</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">19 Mar | Sala Master</div>
+                    </div>
+                    <span class="badge badge-info">50k Kz</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>📋 Dados Fiscais (Grupo Acelerador)</h2>
+                <div style="font-size: 0.75rem; color: var(--text-dim); line-height: 1.6;">
+                    NIF: <span style="color: var(--text);">5001970658</span><br>
+                    Domicílio: <span style="color: var(--text);">Condomínio Zeus</span><br>
+                    Razão Social: <span style="color: var(--text);">Acelerador Empresarial - Comércio & Serviços, LDA</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Pendente</h2>
+                <div class="price-row"><span>Fatura Acelerador (10/02)</span><span class="badge badge-danger">ATRASADO</span></div>
+                <div class="price-row"><span>Visita Técnica (Margarida)</span><span class="badge badge-info">25 FEV</span></div>
+                <div class="price-row"><span>Fatura Piedade Londa</span><span class="badge badge-warn">AMANHÃ</span></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SISTEMA -->
+        <div id="system" class="tab-content">
+            <div class="card">
+                <h2>🧠 Noile Xel Engine</h2>
+                <div class="price-row"><span>Status</span><span class="badge badge-success">ONLINE</span></div>
+                <div class="price-row"><span>Voz</span><span>George (ElevenLabs)</span></div>
+                <div class="price-row"><span>Túnel</span><span style="font-size: 0.7rem; color: var(--accent);">Active Cloudflare Tunnel</span></div>
+            </div>
+            <div class="card">
+                <h2>📡 Logs Recentes</h2>
+                <pre style="font-size: 0.6rem; color: var(--accent); opacity: 0.7; overflow: hidden;">
+[SYSTEM] Cron job fired (09:00)
+[KRAKEN] Price check SOL: 67.84 EUR
+[DASHBOARD] Financials recalculated
+[MAOS_DADDY] SEO profile initialized
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#" class="nav-item active" onclick="showTab('finance', this)">
+            <span class="nav-icon">💎</span><span>Finanças</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('projects', this)">
+            <span class="nav-icon">🚀</span><span>Projetos</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('agenda', this)">
+            <span class="nav-icon">📅</span><span>Agenda</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('system', this)">
+            <span class="nav-icon">⚙️</span><span>Sitema</span>
+        </a>
+    </nav>
+
+    <script>
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('pt-PT');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Simple countdown for Mãos da Daddy (Feb 27)
+        function updateCountdown() {
+            const target = new Date("2026-02-27T00:00:00").getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('deadline').innerText = `${days}d ${hours}h ${mins}m`;
+        }
+        setInterval(updateCountdown, 60000);
+        updateCountdown();
+    </script>
+</body>
+</html>
