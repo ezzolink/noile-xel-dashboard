@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #030308;
+  --accent: #4cc9f0;
+}
+
+body {
+  @apply bg-bg text-white font-outfit overflow-hidden h-screen;
+}
+
+.glass-card {
+  @apply bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[28px];
+}
+
+.scanline::before {
+  content: "";
+  @apply fixed inset-0 pointer-events-none z-[1000] opacity-30;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+  background-size: 100% 4px, 3px 100%;
+}
