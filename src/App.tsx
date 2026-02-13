@@ -5,7 +5,7 @@ import {
   CheckCircle2, Clock, Activity,
   TrendingUp, TrendingDown, Brain, Download,
   ShieldCheck, Zap, History, ChevronRight, AlertCircle,
-  Cpu, Target, Sparkles, Network, Lock, Eye, EyeOff
+  Cpu, Target, Sparkles, Network, Lock, Eye, EyeOff, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
@@ -89,6 +89,7 @@ function App() {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22); doc.setTextColor(76, 201, 240);
     doc.text('NOTA DE HONORÁRIOS', 105, 30, { align: 'center' });
+    
     doc.setDrawColor(76, 201, 240); doc.line(20, 35, 190, 35);
     doc.setTextColor(100); doc.setFontSize(10);
     doc.text(`Data: ${new Date().toLocaleDateString('pt-PT')}`, 20, 45);
@@ -270,8 +271,8 @@ function App() {
                         {tasks.filter(t => t.project_id === p.id).map(t => (
                         <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/5 active:bg-white/10 transition-all group/task">
                             <div className="flex items-center gap-4">
-                                {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-700"></div>}
-                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600 font-light' : 'text-slate-300 font-medium'}`}>{t.title}</span>
+                                {t.is_completed ? <CheckCircle2 size={16} className="text-emerald-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-700"></div>}
+                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
                             </div>
                             <ChevronRight size={12} className="text-slate-800 opacity-0 group-hover/task:opacity-100 transition-opacity" />
                         </div>
@@ -289,7 +290,7 @@ function App() {
           )}
 
           {activeTab === 'agenda' && (
-            <motion.div key="age" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+            <motion.div key="age" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
               
               <div className="glass-card p-6 border-l-4 border-red-500 bg-gradient-to-r from-red-500/[0.03] to-transparent">
                 <h2 className="text-[9px] text-red-500 uppercase font-black tracking-[3px] flex items-center gap-2 mb-5">
@@ -390,7 +391,7 @@ function App() {
               </div>
 
               <div className="glass-card p-6 bg-gradient-to-br from-white/5 to-transparent border-white/10">
-                <h2 className="text-[9px] text-slate-500 uppercase font-black tracking-[3px] mb-4 flex items-center gap-2 font-bold"><ShieldCheck size={12} /> Configuração Fiscal</h2>
+                <h2 className="text-[9px] text-slate-400 uppercase font-black tracking-[3px] mb-4 flex items-center gap-2 font-bold"><ShieldCheck size={12} /> Configuração Fiscal</h2>
                 <div className="bg-black/60 p-5 rounded-2xl font-mono text-[10px] text-accent/80 border border-white/5 space-y-2 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><FileText size={40} /></div>
                     <p className="flex justify-between"><span>CLIENTE:</span> <span className="text-white font-bold">ACELERADOR EMPRESARIAL</span></p>
@@ -413,7 +414,7 @@ function App() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center gap-1.5 transition-all duration-500 relative ${activeTab === tab.id ? 'text-accent -translate-y-2' : 'text-slate-600 hover:text-slate-400'}`}
           >
-            {activeTab === tab.id && (
+            {activeTab === 'finance' && tab.id === 'finance' && (
                 <motion.div layoutId="nav-glow" className="absolute -inset-4 bg-accent/10 rounded-full blur-xl z-0"></motion.div>
             )}
             <tab.icon size={22} className={`z-10 relative transition-all duration-500 ${activeTab === tab.id ? 'drop-shadow-[0_0_10px_#4cc9f0] scale-110' : 'opacity-50 hover:opacity-100'}`} />
