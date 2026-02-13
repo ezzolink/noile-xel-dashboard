@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from './lib/supabase';
 import { 
   Wallet, Rocket, Calendar, Settings,
   CheckCircle2, Clock, Activity,
   TrendingUp, TrendingDown, Brain, Download,
-  ShieldCheck, Zap, History, ChevronRight, AlertCircle
+  ShieldCheck, Zap, History, ChevronRight, AlertCircle,
+  Cpu, ZapOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
@@ -43,6 +44,7 @@ interface AppEvent {
 interface SystemLog {
   id: string;
   message: string;
+  type: string;
   created_at: string;
 }
 
@@ -55,12 +57,11 @@ interface Task {
 
 function App() {
   const [activeTab, setActiveTab] = useState('finance');
-  const [finances, setFinances] = useState<FinanceData>({ total_projected: 440000, current_billing: 50000 });
+  const [finances, setFinances] = useState<FinanceData>({ total_projected: 250000, current_billing: 50000 });
   const [projects, setProjects] = useState<Project[]>([]);
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [logs, setLogs] = useState<SystemLog[]>([]);
   const [market, setMarket] = useState<MarketPrice[]>([]);
-  const [expenses] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -104,14 +105,17 @@ function App() {
     }
   };
 
-  const netProfit = (finances.total_projected || 0);
+  const aiInsight = useMemo(() => {
+    const lastInsight = logs.find(l => l.type === 'insight');
+    return lastInsight ? lastInsight.message.replace('🧠 AI Insight: ', '') : "Analisando fluxo de dados... Standby.";
+  }, [logs]);
 
   const chartData = [
     { name: 'Jan', val: 0 },
     { name: 'Feb', val: 50000 },
     { name: 'Mar', val: 150000 },
     { name: 'Apr', val: 280000 },
-    { name: 'May', val: netProfit },
+    { name: 'May', val: finances.total_projected },
   ];
 
   const generateInvoice = (event: AppEvent) => {
@@ -167,7 +171,7 @@ function App() {
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto relative px-5">
       <header className="pt-8 pb-4 flex justify-between items-center px-2">
-        <div>
+        <div className="flex flex-col">
             <h1 className="text-accent text-xs tracking-[8px] font-light uppercase">Noile Xel</h1>
             <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -186,26 +190,31 @@ function App() {
             <motion.div key="fin" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-5">
               <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-accent/5">
                 <Brain className="text-accent shrink-0" size={18} />
-                <p className="text-[10px] leading-relaxed text-accent/90">
-                  "Projecto Piedade Londa removido. Orçamento projectado recalibrado para 440.000 Kz."
-                </p>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[8px] font-bold text-accent uppercase tracking-widest">IA Strategic Insight</span>
+                    <p className="text-[10px] leading-relaxed text-accent/90 italic">
+                    "{aiInsight}"
+                    </p>
+                </div>
               </div>
 
-              <div className="glass-card p-6 overflow-hidden relative">
+              <div className="glass-card p-6 overflow-hidden relative border-t-2 border-accent/30">
                 <div className="relative z-10">
                     <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Wallet size={12} /> Património Projectado (Fev/Mar)
+                    <Wallet size={12} /> Património Projectado
                     </h2>
-                    <div className="text-4xl font-semibold mt-4 mb-2 flex items-baseline gap-2">
-                    {netProfit.toLocaleString('pt-PT')} <span className="text-sm text-gold font-mono">Kz</span>
+                    <div className="text-4xl font-semibold mt-4 mb-2 flex items-baseline gap-2 font-mono tracking-tighter">
+                    {finances.total_projected?.toLocaleString('pt-PT')} <span className="text-sm text-gold">Kz</span>
                     </div>
                     <div className="flex justify-between items-center mt-4">
-                        <p className="text-[9px] text-slate-500 font-mono uppercase">Liquidez Esperada</p>
-                        <span className="text-[10px] text-emerald-400 font-bold tracking-tighter">+40% vs JAN</span>
+                        <p className="text-[9px] text-slate-500 font-mono uppercase">Liquidez Esperada (Q1)</p>
+                        <span className="text-[10px] text-emerald-400 font-bold tracking-tighter flex items-center gap-1">
+                            <TrendingUp size={10} /> +40% vs JAN
+                        </span>
                     </div>
                 </div>
                 
-                <div className="absolute inset-0 top-16 opacity-30 pointer-events-none">
+                <div className="absolute inset-0 top-16 opacity-20 pointer-events-none">
                     <ResponsiveContainer width="100%" height={100}>
                         <AreaChart data={chartData}>
                             <defs>
@@ -222,12 +231,12 @@ function App() {
 
               <div className="grid grid-cols-2 gap-4 mt-2">
                 {market.map(m => (
-                  <div key={m.symbol} className="glass-card p-4 group hover:border-accent/40 transition-colors">
+                  <div key={m.symbol} className="glass-card p-4 group hover:border-accent/40 transition-colors bg-gradient-to-br from-white/5 to-transparent">
                     <div className="flex justify-between items-start">
                       <span className="text-[9px] text-slate-400 font-bold tracking-tighter">{m.symbol}/EUR</span>
                       {m.change_24h > 0 ? <TrendingUp size={12} className="text-emerald-500" /> : <TrendingDown size={12} className="text-red-500" />}
                     </div>
-                    <div className="text-lg font-mono font-bold mt-1 tracking-tighter">{m.price}</div>
+                    <div className="text-xl font-mono font-bold mt-1 tracking-tighter">{m.price?.toLocaleString()}</div>
                     <div className={`text-[9px] font-bold ${m.change_24h > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
                       {m.change_24h > 0 ? '+' : ''}{m.change_24h}%
                     </div>
@@ -236,19 +245,19 @@ function App() {
               </div>
 
               <div className="glass-card p-5">
-                 <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4">Breakdown de Facturação</h2>
+                 <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4">Breakdown Ativo</h2>
                  <div className="space-y-4">
                     <div className="flex justify-between items-center text-[10px]">
-                        <span className="text-slate-300">Grupo Acelerador (Total)</span>
-                        <span className="text-emerald-400 font-mono">+250.000 Kz</span>
+                        <span className="text-slate-400">Grupo Acelerador (5x)</span>
+                        <span className="text-slate-100 font-mono">250.000 Kz</span>
                     </div>
-                    <div className="flex justify-between items-center text-[10px]">
-                        <span className="text-slate-300">ITAQ (Website)</span>
-                        <span className="text-emerald-400 font-mono">+170.000 Kz</span>
+                    <div className="flex justify-between items-center text-[10px] opacity-40">
+                        <span className="text-slate-400 italic">Novos Projectos em Pipeline</span>
+                        <span className="text-slate-100 font-mono">Standby</span>
                     </div>
-                    <div className="pt-2 border-t border-white/5 flex justify-between items-center text-[10px] font-bold">
-                        <span className="text-slate-100 uppercase tracking-widest">Total Bruto</span>
-                        <span className="text-gold font-mono text-xs">440.000 Kz</span>
+                    <div className="pt-3 border-t border-white/10 flex justify-between items-center">
+                        <span className="text-[9px] text-accent uppercase font-bold tracking-[2px]">Total Projectado</span>
+                        <span className="text-gold font-mono text-sm font-bold">{finances.total_projected?.toLocaleString()} Kz</span>
                     </div>
                  </div>
               </div>
@@ -264,27 +273,47 @@ function App() {
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         {p.name} {p.name === 'Keimadura' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Zap size={14} className="text-gold animate-pulse" />}
                       </h2>
-                      <p className="text-[9px] text-slate-400 uppercase tracking-widest">{p.description}</p>
+                      <p className="text-[9px] text-slate-400 uppercase tracking-widest leading-relaxed">{p.description}</p>
                     </div>
                   </div>
 
-                  {p.name === 'Keimadura' && (
-                    <div className="space-y-4">
+                  {p.name === 'Keimadura' ? (
+                    <div className="space-y-4 mt-4">
                         <div className="flex gap-2">
                             <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-1 rounded-full font-bold">AUDIT OK</span>
-                            <span className="text-[8px] bg-accent/10 text-accent border border-accent/20 px-2 py-1 rounded-full font-bold">SYNC ACTIVE</span>
+                            <span className="text-[8px] bg-accent/10 text-accent border border-accent/20 px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Sync Active</span>
+                            <span className="text-[8px] bg-white/5 text-slate-400 border border-white/10 px-2 py-1 rounded-full font-bold">V.2.1</span>
                         </div>
-                        <div className="flex gap-1 h-8 items-end opacity-60">
-                            {[...Array(24)].map((_, i) => (
-                                <div key={i} className="flex-1 bg-emerald-500 rounded-sm" style={{ height: `${Math.random() * 40 + 60}%`, opacity: Math.random() > 0.2 ? 1 : 0.2 }}></div>
+                        <div className="flex gap-1 h-10 items-end opacity-40">
+                            {[...Array(28)].map((_, i) => (
+                                <div key={i} className="flex-1 bg-emerald-500 rounded-sm transition-all" style={{ height: `${Math.random() * 40 + 60}%`, opacity: Math.random() > 0.2 ? 1 : 0.1 }}></div>
                             ))}
                         </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 mt-6">
+                        <div className="flex justify-between items-center text-[8px] text-slate-500 uppercase tracking-widest mb-1 font-bold">
+                            <span>Checklist Operacional</span>
+                            <span>{tasks.filter(t => t.project_id === p.id && t.is_completed).length}/{tasks.filter(t => t.project_id === p.id).length}</span>
+                        </div>
+                        {tasks.filter(t => t.project_id === p.id).map(t => (
+                        <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 cursor-pointer active:scale-95 transition-all hover:bg-white/10">
+                            <div className="flex items-center gap-3">
+                                {t.is_completed ? <ShieldCheck size={16} className="text-emerald-500" /> : <Clock size={16} className="text-slate-600" />}
+                                <span className={`text-[11px] ${t.is_completed ? 'line-through text-slate-600 font-light' : 'text-slate-200'}`}>{t.title}</span>
+                            </div>
+                            <ChevronRight size={10} className="text-slate-700" />
+                        </div>
+                        ))}
                     </div>
                   )}
 
                   <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-                    <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : '---'}</div>
-                    <button className="bg-accent/10 text-accent text-[9px] px-6 py-3 rounded-2xl font-bold border border-accent/20 hover:bg-accent hover:text-black transition-all uppercase tracking-widest">Aceder Workspace</button>
+                    <div>
+                        <span className="text-[8px] text-slate-500 uppercase font-bold tracking-tighter block mb-1">Contract Value</span>
+                        <div className="text-lg font-mono text-gold font-bold">{p.value > 0 ? `${p.value?.toLocaleString()} Kz` : 'VALOR FIXO'}</div>
+                    </div>
+                    <button className="bg-accent text-black text-[9px] px-6 py-3 rounded-2xl font-black border border-accent/20 hover:scale-105 active:scale-95 transition-all uppercase tracking-[2px] shadow-lg shadow-accent/20">Aceder Hub</button>
                   </div>
                 </div>
               ))}
@@ -294,44 +323,51 @@ function App() {
           {activeTab === 'agenda' && (
             <motion.div key="age" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
               
-              {/* PENDENTES CRÍTICOS */}
-              <div className="glass-card p-6 border-t-4 border-red-500/50">
-                <h2 className="text-[10px] text-red-400 uppercase tracking-widest flex items-center gap-2 mb-4">
-                  <AlertCircle size={12} /> Pendentes Críticos
+              <div className="glass-card p-6 border-t-4 border-red-500/50 bg-gradient-to-b from-red-500/5 to-transparent">
+                <h2 className="text-[10px] text-red-400 uppercase tracking-widest flex items-center gap-2 mb-4 font-bold">
+                  <AlertCircle size={12} /> Alertas de Acção Crítica
                 </h2>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-white/5">
-                    <span className="text-xs text-slate-300 font-medium">Fatura Evento 10/02</span>
-                    <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 uppercase">Atrasado</span>
+                    <span className="text-[11px] text-slate-300 font-medium">Fatura Evento 10/02</span>
+                    <span className="text-[8px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-full border border-red-500/20 uppercase tracking-tighter">Liquidamento Pendente</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-xs text-slate-300 font-medium">Visita Técnica (Margarida)</span>
-                    <span className="text-[9px] font-bold text-gold bg-gold/10 px-2 py-1 rounded border border-gold/20 uppercase">25 FEV</span>
+                    <span className="text-[11px] text-slate-300 font-medium">Visita Técnica (Margarida)</span>
+                    <span className="text-[8px] font-black text-gold bg-gold/10 px-2 py-1 rounded-full border border-gold/20 uppercase tracking-tighter">Agendada: 25 FEV</span>
                   </div>
                 </div>
               </div>
 
-              {/* ROADMAP FULL VIEW */}
               <div className="glass-card p-6">
-                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-8"><Calendar size={12} /> Roadmap Full View (Q1/Q2)</h2>
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2 font-bold"><Calendar size={12} /> Cronograma do Trimestre</h2>
+                    <div className="flex gap-1">
+                        <span className="w-1 h-1 rounded-full bg-accent"></span>
+                        <span className="w-1 h-1 rounded-full bg-accent opacity-50"></span>
+                        <span className="w-1 h-1 rounded-full bg-accent opacity-20"></span>
+                    </div>
+                </div>
                 <div className="space-y-6">
                   {upcomingEvents.map((ev, i) => (
                     <div key={i} className="flex justify-between items-center group">
                       <div className="flex items-center gap-5">
-                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/10 group-hover:border-accent/30 transition-all">
-                            <span className="text-[9px] text-accent font-bold uppercase">{new Date(ev.date).toLocaleDateString('pt-PT', {month: 'short'})}</span>
-                            <span className="text-lg font-bold">{new Date(ev.date).getDate()}</span>
+                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/10 group-hover:border-accent/40 group-hover:bg-accent/5 transition-all duration-500">
+                            <span className="text-[9px] text-accent font-black uppercase tracking-tighter">{new Date(ev.date).toLocaleDateString('pt-PT', {month: 'short'})}</span>
+                            <span className="text-xl font-black font-mono tracking-tighter">{new Date(ev.date).getDate()}</span>
                         </div>
                         <div>
-                          <div className="text-sm font-semibold tracking-tight">{ev.title}</div>
-                          <div className="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter font-mono">{ev.location}</div>
+                          <div className="text-[13px] font-bold tracking-tight text-slate-100 group-hover:text-accent transition-colors">{ev.title}</div>
+                          <div className="text-[9px] text-slate-500 mt-1 uppercase tracking-[1px] font-mono flex items-center gap-1">
+                              <Activity size={8} /> {ev.location}
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <span className="text-xs font-mono font-bold text-gold">{ev.value > 0 ? `${ev.value?.toLocaleString()} Kz` : '---'}</span>
+                        <span className="text-[11px] font-mono font-bold text-gold">{ev.value > 0 ? `${ev.value?.toLocaleString()} Kz` : '---'}</span>
                         {ev.value > 0 && (
-                            <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent transition-all">
-                                <Download size={16} className="text-accent group-hover:text-black" />
+                            <button onClick={() => generateInvoice(ev)} className="p-3 bg-white/5 rounded-xl hover:bg-accent group-hover:scale-110 active:scale-95 transition-all shadow-xl hover:shadow-accent/20 group-hover:rotate-3">
+                                <Download size={14} className="text-accent group-hover:text-black" />
                             </button>
                         )}
                       </div>
@@ -340,20 +376,22 @@ function App() {
                 </div>
               </div>
 
-              {/* HISTÓRICO DE EVENTOS */}
-              <div className="glass-card p-6 bg-black/40 border-dashed border border-white/10">
-                <h2 className="text-[10px] text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-6"><History size={12} /> Histórico de Actividade</h2>
+              <div className="glass-card p-6 bg-black/40 border-dashed border border-white/10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10"><History size={40} /></div>
+                <h2 className="text-[10px] text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-6 font-bold"><History size={12} /> Log de Actividade Passada</h2>
                 <div className="space-y-4">
                   {pastEvents.map((ev, i) => (
-                    <div key={i} className="flex justify-between items-center opacity-60">
+                    <div key={i} className="flex justify-between items-center opacity-50 hover:opacity-100 transition-opacity">
                       <div className="flex items-center gap-4">
-                        <CheckCircle2 size={14} className="text-emerald-500" />
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                            <CheckCircle2 size={14} className="text-emerald-500" />
+                        </div>
                         <div>
-                          <div className="text-xs font-medium text-slate-200">{ev.title}</div>
+                          <div className="text-[11px] font-bold text-slate-200">{ev.title}</div>
                           <div className="text-[9px] text-slate-500 font-mono">{new Date(ev.date).toLocaleDateString('pt-PT')}</div>
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-400">{ev.value?.toLocaleString()} Kz</span>
+                      <span className="text-[10px] font-mono text-slate-400 font-bold">{ev.value?.toLocaleString()} Kz</span>
                     </div>
                   ))}
                 </div>
@@ -363,22 +401,48 @@ function App() {
 
           {activeTab === 'system' && (
             <motion.div key="sys" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
-              <div className="glass-card p-6 bg-black/95 font-mono relative overflow-hidden shadow-2xl">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_#4cc9f0]"></span>
-                        <span className="text-[10px] text-accent uppercase tracking-tighter font-bold">Enterprise Live Monitor</span>
+              <div className="glass-card p-6 bg-black/95 font-mono relative overflow-hidden shadow-2xl border border-accent/20">
+                <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <span className="absolute inset-0 bg-accent rounded-full animate-ping opacity-20"></span>
+                            <Cpu size={20} className="text-accent relative" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[11px] text-accent uppercase font-black tracking-widest">Noile Xel Engine</span>
+                            <span className="text-[7px] text-emerald-500 font-bold tracking-[3px]">STABLE KERNEL 2.6.5</span>
+                        </div>
                     </div>
-                    <span className="text-[8px] text-slate-700">TS-2.6.0-STABLE</span>
+                    <div className="flex flex-col items-end">
+                        <span className="text-[8px] text-slate-600 font-bold">UPTIME</span>
+                        <span className="text-[10px] text-slate-400">99.9%</span>
+                    </div>
                 </div>
-                <div className="space-y-3 text-[9px] text-accent/60 leading-relaxed max-h-80 overflow-y-auto pr-2 scrollbar-hide">
+                <div className="space-y-4 text-[9px] text-accent/60 leading-relaxed max-h-[400px] overflow-y-auto pr-2 scrollbar-hide">
                   {logs.map(l => (
-                    <p key={l.id} className="border-l border-accent/20 pl-3 py-2 bg-white/[0.02] rounded-r-lg">{`> [${new Date(l.created_at).toLocaleTimeString()}] ${l.message}`}</p>
+                    <div key={l.id} className="flex gap-3 border-l-2 border-accent/10 pl-3 py-1 hover:bg-white/[0.03] transition-colors rounded-r-lg">
+                        <span className="text-slate-700 whitespace-nowrap">[{new Date(l.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit', second:'2-digit'})}]</span>
+                        <span className={`${l.type === 'insight' ? 'text-gold italic font-medium' : 'text-accent/80'}`}>{l.message}</span>
+                    </div>
                   ))}
-                  <div className="flex gap-2 items-center text-emerald-500/50 mt-4">
-                      <Activity size={10} className="animate-bounce" />
-                      <span className="text-[8px] uppercase tracking-widest">Listening for data changes...</span>
+                  <div className="flex gap-2 items-center text-emerald-500 mt-6 animate-pulse">
+                      <Activity size={10} />
+                      <span className="text-[8px] uppercase tracking-[4px] font-black">Scanning Global Node Cluster...</span>
                   </div>
+                </div>
+              </div>
+              
+              <div className="glass-card p-5 bg-gradient-to-br from-white/5 to-transparent">
+                <h2 className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 font-bold flex items-center gap-2"><ShieldCheck size={12} /> Configuração de Agente</h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <span className="text-[8px] text-slate-500 uppercase font-black tracking-tighter">Model Provider</span>
+                        <div className="text-[10px] font-bold">DeepMind Antigravity</div>
+                    </div>
+                    <div className="space-y-1 text-right">
+                        <span className="text-[8px] text-slate-500 uppercase font-black tracking-tighter">Auth Layer</span>
+                        <div className="text-[10px] font-bold text-accent">OAuth 2.1 Secured</div>
+                    </div>
                 </div>
               </div>
             </motion.div>
@@ -402,10 +466,17 @@ function App() {
       {loading && (
         <div className="absolute inset-0 bg-bg/95 backdrop-blur-3xl z-[3000] flex items-center justify-center">
           <div className="flex flex-col items-center gap-8">
-            <Activity className="text-accent animate-spin" size={60} />
-            <span className="text-[12px] text-accent font-mono tracking-[12px] animate-pulse uppercase">Syncing Node</span>
+            <div className="relative">
+                <Cpu className="text-accent animate-spin-slow" size={60} />
+                <div className="absolute inset-0 blur-2xl bg-accent/30 animate-pulse"></div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+                <span className="text-[12px] text-accent font-mono tracking-[15px] animate-pulse uppercase font-black">Noile Core</span>
+                <span className="text-[7px] text-slate-500 uppercase tracking-[4px]">Synthesizing Neural Matrix...</span>
+            </div>
           </div>
         </div>
+      </div>
       )}
     </div>
   );
