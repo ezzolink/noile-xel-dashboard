@@ -21,6 +21,11 @@ interface SystemLog { id: string; message: string; type: string; created_at: str
 interface Task { id: string; project_id: string; title: string; is_completed: boolean; }
 interface StrategicInsight { id: string; title: string; analysis: string; impact_score: number; category: string; }
 
+// Logos
+const LOGO_MAIN = "https://res.cloudinary.com/djhn3zwkw/image/upload/v1770921269/WE_yxzxt6.png";
+const LOGO_SEC = "https://res.cloudinary.com/djhn3zwkw/image/upload/v1770921269/KEIMADURA_GGG_zu2zzb.png";
+const LOGO_ANIM = "https://res.cloudinary.com/djhn3zwkw/image/upload/v1770921269/SDSDSD_ldqfgb.png";
+
 function App() {
   const [isLocked, setIsLocked] = useState(true);
   const [password, setPassword] = useState('');
@@ -116,11 +121,17 @@ function App() {
     return (
         <div className="flex flex-col h-screen bg-[#030308] items-center justify-center px-10">
             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center w-full">
-                <div className="w-20 h-20 rounded-3xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(76,201,240,0.2)]">
-                    <Lock className="text-accent" size={32} />
+                <div className="w-32 h-32 mb-10 relative">
+                    <motion.img 
+                        src={LOGO_ANIM} 
+                        className="w-full h-full object-contain"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ repeat: Infinity, duration: 4 }}
+                    />
+                    <div className="absolute inset-0 blur-3xl bg-accent/20 animate-pulse -z-10"></div>
                 </div>
-                <h1 className="text-white text-lg font-black uppercase tracking-[5px] mb-2">Security Layer</h1>
-                <p className="text-slate-500 text-[10px] uppercase tracking-widest mb-10">Neural Strategist Matrix</p>
+                <h1 className="text-white text-lg font-black uppercase tracking-[5px] mb-2">Keimadura</h1>
+                <p className="text-slate-500 text-[10px] uppercase tracking-widest mb-10 text-center px-4 leading-relaxed">Neural Strategist Hub <br/> Elias Sebastião Enterprise</p>
                 
                 <div className="w-full relative">
                     <input 
@@ -128,7 +139,7 @@ function App() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="IDENTIFIER_KEY"
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 px-6 text-center text-accent font-mono tracking-[4px] outline-none focus:border-accent/40 transition-all"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 px-6 text-center text-accent font-mono tracking-[4px] outline-none focus:border-accent/40 transition-all placeholder:text-slate-800"
                         onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                     />
                     <button 
@@ -153,11 +164,14 @@ function App() {
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto relative px-5 selection:bg-accent selection:text-black">
       <header className="pt-10 pb-6 flex justify-between items-center px-2">
-        <div className="flex flex-col">
-            <h1 className="text-accent text-xs tracking-[8px] font-extralight uppercase opacity-80">Noile Xel</h1>
-            <div className="flex items-center gap-2 mt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
-                <span className="text-[7px] text-slate-500 uppercase font-black tracking-[2px]">Neural Strategist Active</span>
+        <div className="flex items-center gap-3">
+            <img src={LOGO_SEC} className="h-8 object-contain" />
+            <div className="flex flex-col">
+                <h1 className="text-white text-xs tracking-[4px] font-black uppercase">Keimadura</h1>
+                <div className="flex items-center gap-2 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
+                    <span className="text-[7px] text-slate-500 uppercase font-black tracking-[1.5px]">Matrix Online</span>
+                </div>
             </div>
         </div>
         <div className="text-right flex flex-col">
@@ -202,7 +216,7 @@ function App() {
                             <span className="text-[10px] text-emerald-400 font-black tracking-tighter">+40.2% Growth</span>
                         </div>
                         <div className="h-8 w-24 opacity-40">
-                             <ResponsiveContainer width="100%" height={100}>
+                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={chartData}>
                                     <Area type="monotone" dataKey="val" stroke="#4cc9f0" fill="#4cc9f0" fillOpacity={0.2} />
                                 </AreaChart>
@@ -233,15 +247,15 @@ function App() {
             <motion.div key="proj" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
               
               <div className="px-2">
-                 <h2 className="text-[9px] text-slate-500 uppercase font-black tracking-[4px] mb-6">Neural Project Hub</h2>
+                 <h2 className="text-[9px] text-slate-500 uppercase font-black tracking-[4px] mb-6 font-mono">Neural_Project_Hub</h2>
               </div>
 
               {projects.map(p => (
-                <div key={p.id} className={`glass-card p-7 relative overflow-hidden group ${p.name === 'Keimadura' ? 'border-l-4 border-keimadura' : 'border-l-4 border-accent'}`}>
+                <div key={p.id} className={`glass-card p-7 relative overflow-hidden group ${p.name === 'Keimadura' ? 'border-l-4 border-accent' : 'border-l-4 border-accent'}`}>
                   <div className="flex justify-between items-start mb-6">
                     <div className="flex flex-col">
                       <h2 className="text-xl font-bold flex items-center gap-3 text-slate-100">
-                        {p.name} {p.name === 'Keimadura' ? <ShieldCheck size={18} className="text-keimadura" /> : <Zap size={16} className="text-gold" />}
+                        {p.name} <ShieldCheck size={18} className="text-accent" />
                       </h2>
                       <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest mt-1.5 leading-relaxed">{p.description}</p>
                     </div>
@@ -254,7 +268,7 @@ function App() {
                     <div className="space-y-5">
                         <div className="flex gap-1.5 h-12 items-end">
                             {[...Array(32)].map((_, i) => (
-                                <div key={i} className="flex-1 bg-emerald-500/60 rounded-full" style={{ height: `${Math.random() * 40 + 60}%`, opacity: Math.random() > 0.1 ? 1 : 0.05 }}></div>
+                                <div key={i} className="flex-1 bg-accent/60 rounded-full" style={{ height: `${Math.random() * 40 + 60}%`, opacity: Math.random() > 0.1 ? 1 : 0.05 }}></div>
                             ))}
                         </div>
                         <div className="flex justify-between items-center text-[7px] text-slate-600 font-black uppercase tracking-[2px]">
@@ -264,15 +278,11 @@ function App() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                        <div className="flex justify-between items-center text-[8px] text-slate-500 uppercase font-black tracking-widest mb-1">
-                            <span>Checklist de Desenvolvimento</span>
-                            <span>{tasks.filter(t => t.project_id === p.id && t.is_completed).length}/{tasks.filter(t => t.project_id === p.id).length}</span>
-                        </div>
                         {tasks.filter(t => t.project_id === p.id).map(t => (
                         <div key={t.id} onClick={() => toggleTask(t.id, t.is_completed)} className="flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/5 active:bg-white/10 transition-all group/task">
                             <div className="flex items-center gap-4">
                                 {t.is_completed ? <CheckCircle2 size={16} className="text-emerald-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-700"></div>}
-                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600' : 'text-slate-300'}`}>{t.title}</span>
+                                <span className={`text-xs ${t.is_completed ? 'line-through text-slate-600 font-light' : 'text-slate-300 font-medium'}`}>{t.title}</span>
                             </div>
                             <ChevronRight size={12} className="text-slate-800 opacity-0 group-hover/task:opacity-100 transition-opacity" />
                         </div>
@@ -290,10 +300,10 @@ function App() {
           )}
 
           {activeTab === 'agenda' && (
-            <motion.div key="age" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+            <motion.div key="age" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
               
               <div className="glass-card p-6 border-l-4 border-red-500 bg-gradient-to-r from-red-500/[0.03] to-transparent">
-                <h2 className="text-[9px] text-red-500 uppercase font-black tracking-[3px] flex items-center gap-2 mb-5">
+                <h2 className="text-[9px] text-red-500 uppercase font-black tracking-[3px] flex items-center gap-2 mb-5 font-bold">
                   <AlertCircle size={12} /> Alertas de Protocolo
                 </h2>
                 <div className="space-y-4 font-mono text-[10px]">
@@ -365,15 +375,15 @@ function App() {
                             <Cpu size={24} className="text-accent relative" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[12px] text-white font-black uppercase tracking-[3px]">Neural Monitor</span>
-                            <span className="text-[8px] text-emerald-500 font-black tracking-[4px]">CORE.2.6.5-ONLINE</span>
+                            <span className="text-[12px] text-white font-black uppercase tracking-[3px]">Keimadura Kernel</span>
+                            <span className="text-[8px] text-emerald-500 font-black tracking-[4px]">STABLE.NODE.2.6.5</span>
                         </div>
                     </div>
                     <button 
                         onClick={() => { localStorage.removeItem('noile_auth'); window.location.reload(); }}
                         className="text-[8px] text-red-500 border border-red-500/20 px-3 py-1.5 rounded-full font-black uppercase hover:bg-red-500 hover:text-black transition-all"
                     >
-                        Encerrar Sessão
+                        OFFLINE
                     </button>
                 </div>
                 <div className="space-y-4 text-[10px] font-mono text-accent/60 leading-relaxed max-h-96 overflow-y-auto pr-2 scrollbar-hide">
@@ -383,24 +393,12 @@ function App() {
                         <span className={`${l.type === 'insight' ? 'text-gold italic font-bold' : l.type === 'error' ? 'text-red-500' : 'text-accent/80 font-light'}`}>{l.message}</span>
                     </div>
                   ))}
-                  <div className="flex gap-3 items-center text-emerald-500 mt-6 opacity-30 animate-pulse">
-                      <Activity size={10} />
-                      <span className="text-[7px] uppercase tracking-[6px] font-black">Scanning Global Node Cluster</span>
-                  </div>
                 </div>
               </div>
 
-              <div className="glass-card p-6 bg-gradient-to-br from-white/5 to-transparent border-white/10">
-                <h2 className="text-[9px] text-slate-400 uppercase font-black tracking-[3px] mb-4 flex items-center gap-2 font-bold"><ShieldCheck size={12} /> Configuração Fiscal</h2>
-                <div className="bg-black/60 p-5 rounded-2xl font-mono text-[10px] text-accent/80 border border-white/5 space-y-2 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><FileText size={40} /></div>
-                    <p className="flex justify-between"><span>CLIENTE:</span> <span className="text-white font-bold">ACELERADOR EMPRESARIAL</span></p>
-                    <p className="flex justify-between"><span>NIF:</span> <span className="text-white font-bold">5001970658</span></p>
-                    <p className="flex justify-between"><span>MORADA:</span> <span className="text-white font-bold">CONDOMÍNIO ZEUS</span></p>
-                    <div className="pt-2 border-t border-white/5 mt-2 flex justify-between">
-                        <span>ESTADO:</span> <span className="text-emerald-500 font-black">REGISTADO</span>
-                    </div>
-                </div>
+              <div className="glass-card p-6 bg-gradient-to-br from-white/5 to-transparent border-white/10 text-center">
+                 <img src={LOGO_MAIN} className="h-12 mx-auto mb-4 object-contain" />
+                 <p className="text-[10px] text-slate-500 uppercase tracking-widest">Elias Sebastião Enterprise © 2026</p>
               </div>
             </motion.div>
           )}
@@ -414,7 +412,7 @@ function App() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center gap-1.5 transition-all duration-500 relative ${activeTab === tab.id ? 'text-accent -translate-y-2' : 'text-slate-600 hover:text-slate-400'}`}
           >
-            {activeTab === 'finance' && tab.id === 'finance' && (
+            {activeTab === tab.id && (
                 <motion.div layoutId="nav-glow" className="absolute -inset-4 bg-accent/10 rounded-full blur-xl z-0"></motion.div>
             )}
             <tab.icon size={22} className={`z-10 relative transition-all duration-500 ${activeTab === tab.id ? 'drop-shadow-[0_0_10px_#4cc9f0] scale-110' : 'opacity-50 hover:opacity-100'}`} />
@@ -425,15 +423,14 @@ function App() {
 
       {loading && (
         <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl z-[3000] flex flex-col items-center justify-center text-center">
-            <div className="relative mb-10">
-                <Cpu className="text-accent animate-spin-slow opacity-20" size={100} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <Activity className="text-accent animate-pulse" size={40} />
-                </div>
-                <div className="absolute inset-0 blur-3xl bg-accent/20 animate-pulse"></div>
-            </div>
-            <span className="text-[12px] text-accent font-mono tracking-[15px] animate-pulse uppercase font-black">Noile Core</span>
-            <span className="text-[8px] text-slate-500 uppercase tracking-[4px] mt-4 opacity-50">Calibrating Decision Matrix...</span>
+            <motion.img 
+                src={LOGO_ANIM} 
+                className="w-24 h-24 object-contain mb-8"
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+            />
+            <span className="text-[12px] text-accent font-mono tracking-[15px] animate-pulse uppercase font-black">Keimadura</span>
+            <span className="text-[8px] text-slate-500 uppercase tracking-[4px] mt-4 opacity-50 font-bold">Synchronizing Matrix...</span>
         </div>
       )}
     </div>
