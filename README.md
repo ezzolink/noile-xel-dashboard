@@ -16,7 +16,7 @@ O **Noile Xel Dashboard PRO** é uma plataforma de gestão empresarial de elite,
 - **Frontend:** React 18, Vite, Tailwind CSS v4, Framer Motion (Animações).
 - **Backend:** Supabase (PostgreSQL + Realtime).
 - **Bibliotecas Pro:** jsPDF (Documentação), Recharts (Visualização), Lucide (Iconografia).
-- **Deployment:** Netlify (CI/CD Automático).
+- **Deployment:** Vercel (CI/CD Automático).
 
 ## 🤖 Operação do Agente
 
